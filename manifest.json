@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Paste Image to Drive",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Paste images from the clipboard (Ctrl+V) straight into the open Google Drive folder. No download/upload step.",
   "author": "Saimum Islam",
   "homepage_url": "https://github.com/SaimumIslam/paste-image-to-drive",
@@ -15,7 +15,7 @@
     {
       "matches": ["https://drive.google.com/*"],
       "js": ["content.js"],
-      "run_at": "document_idle",
+      "run_at": "document_start",
       "world": "MAIN"
     }
   ]

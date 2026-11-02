@@ -43,11 +43,11 @@ Install it from the Edge Add-ons store (link coming soon), or load it unpacked a
 
 ## How it works
 
-The content script listens for `paste` on drive.google.com. When the clipboard holds an image, it wraps the image in a `DataTransfer` and dispatches a synthetic `drop` event on Drive's main file list. Drive treats that as a normal drag-and-drop upload into the current folder. No Google API access or OAuth is involved.
+The content script catches Ctrl/Cmd+V on drive.google.com and reads the image from the clipboard (Chrome asks once for clipboard permission). It then opens Drive's own **New → File upload** menu and intercepts the file picker Drive tries to open, giving it the pasted image instead. Drive uploads the file into the current folder exactly as if you'd picked it yourself. No Google API access or OAuth is involved.
 
 ## Limitations
 
-- It depends on Drive's drag-and-drop handling. If Google changes it, uploads may stop working. Please [open an issue](../../issues) if that happens.
+- It depends on Drive's "New → File upload" menu, and the menu text must be in English for now. If Google changes the menu, uploads may stop working. Please [open an issue](../../issues) if that happens.
 - Firefox isn't supported yet, because it lacks MV3 `"world": "MAIN"` content scripts.
 
 ## Contributing
