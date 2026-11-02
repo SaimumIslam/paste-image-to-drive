@@ -50,6 +50,18 @@ The content script catches Ctrl/Cmd+V on drive.google.com and reads the image fr
 - It depends on Drive's "New → File upload" menu, and the menu text must be in English for now. If Google changes the menu, uploads may stop working. Please [open an issue](../../issues) if that happens.
 - Firefox isn't supported yet, because it lacks MV3 `"world": "MAIN"` content scripts.
 
+## Troubleshooting
+
+If a paste doesn't upload, open the DevTools console on Drive (Cmd+Option+J or Ctrl+Shift+J) and look for `[Paste Image to Drive]` warnings. For step-by-step logs, run this in the console and reload:
+
+```js
+localStorage.pasteToDriveDebug = '1'
+```
+
+To turn them off again, run `localStorage.removeItem('pasteToDriveDebug')`.
+
+The `Refused to set unsafe header "content-length"` error comes from Drive's own upload code and is harmless.
+
 ## Contributing
 
 Issues and PRs are welcome. To develop, load the folder unpacked, edit `content.js`, and click the reload icon on the extension card.

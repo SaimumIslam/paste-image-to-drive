@@ -5,7 +5,12 @@
   if (window.__drivePasteImageLoaded) return;
   window.__drivePasteImageLoaded = true;
 
-  const LOG = (...a) => console.log('[Paste Image to Drive]', ...a);
+  // Quiet by default. Enable step-by-step logs from the Drive console with:
+  //   localStorage.pasteToDriveDebug = '1'   (then reload)
+  let DEBUG = false;
+  try { DEBUG = localStorage.getItem('pasteToDriveDebug') === '1'; } catch {}
+  const LOG = (...a) => { if (DEBUG) console.log('[Paste Image to Drive]', ...a); };
+  const WARN = (...a) => console.warn('[Paste Image to Drive]', ...a);
 
   const EXT = {
     'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif',
@@ -142,7 +147,7 @@
   function upload(files) {
     return new Promise(async (resolve) => {
       const timer = setTimeout(() => {
-        if (pending) { pending = null; LOG('timed out waiting for Drive file input'); escape(); }
+        if (pending) { pending = null; WARN('timed out waiting for Drive file input'); escape(); }
         resolve(false);
       }, 4000);
       pending = { files, done: (ok) => { clearTimeout(timer); resolve(ok); } };
@@ -150,13 +155,13 @@
       // Menu may already be open; otherwise wait for Drive to render "New".
       if (!findUploadItem()) {
         const btn = await waitFor(findNewButton, 2000);
-        if (!btn) { LOG('"New" button not found'); return; }
+        if (!btn) { WARN('"New" button not found'); return; }
         if (!pending) return;
         fakeClick(btn);
       }
 
       const item = await waitFor(findUploadItem, 2000);
-      if (!item) { LOG('"File upload" menu item not found'); escape(); return; }
+      if (!item) { WARN('"File upload" menu item not found'); escape(); return; }
       if (!pending) return;
       fakeClick(item);
     });
@@ -217,7 +222,7 @@
 
   async function readClipboardFallback() {
     LOG('no paste event (Drive blocked it), reading clipboard directly');
-    if (!navigator.clipboard?.read) return LOG('Clipboard API unavailable');
+    if (!navigator.clipboard?.read) return WARN('Clipboard API unavailable');
     try {
       const items = await navigator.clipboard.read();
       const images = [];
@@ -230,7 +235,7 @@
       if (images.length) handle(images, 'clipboard API');
       else LOG('clipboard has no image');
     } catch (err) {
-      LOG('clipboard read failed:', err);
+      WARN('clipboard read failed:', err);
       toast('Allow clipboard access for drive.google.com to paste images');
     }
   }
